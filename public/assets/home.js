@@ -100,16 +100,27 @@ function buildLava() {
   top.position.y = 0.82;
   top.castShadow = top.receiveShadow = true;
   g.add(top);
-  const sphMat = new THREE.MeshStandardMaterial({ map: tex(plankCanvas({ w: 512, h: 512, seed: 9, tone: 'oak' })), roughness: 0.45, color: '#b59877' });
-  for (let i = 0; i < 3; i++) {
-    const a = (i / 3) * Math.PI * 2 + Math.PI / 2;
-    const sp = new THREE.Mesh(new THREE.SphereGeometry(0.36, 64, 48), sphMat);
-    sp.position.set(Math.cos(a) * 0.62, 0.36, Math.sin(a) * 0.62);
-    sp.castShadow = true;
-    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.15, 0.2, 32), sphMat);
-    col.position.set(sp.position.x, 0.73, sp.position.z);
-    g.add(sp, col);
-  }
+  // подстолье как на фото: три ноги, у каждой шар-«луковица» на своей высоте
+  const legMat = new THREE.MeshStandardMaterial({ map: tex(plankCanvas({ w: 512, h: 512, seed: 9, tone: 'oak' })), roughness: 0.5, color: '#9a6a43', emissive: '#3a1d0c', emissiveIntensity: 0.9 });
+  const top0 = 0.74;
+  [[0.34, Math.PI / 2], [0.4, Math.PI / 2 + 2.1], [0.5, Math.PI / 2 + 4.2]].forEach(([by, a]) => {
+    const x = Math.cos(a) * 0.78, z = Math.sin(a) * 0.78;
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.32, 64, 40), legMat);
+    bulb.scale.y = 0.5;
+    bulb.position.set(x, by, z);
+    const lo = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, by, 40), legMat);
+    lo.position.set(x, by / 2, z);
+    const hi = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, top0 - by, 40), legMat);
+    hi.position.set(x, by + (top0 - by) / 2, z);
+    for (const m of [bulb, lo, hi]) m.castShadow = true;
+    g.add(bulb, lo, hi);
+  });
+  // тёплый подсвет снизу, иначе ноги под столешницей уходят в черноту
+  const under = new THREE.PointLight('#ff8a3d', 14, 2.6, 2);
+  under.position.set(0, 0.62, 0);
+  const rim = new THREE.PointLight('#ffd9a8', 30, 5, 1.4);
+  rim.position.set(0, 0.45, 2.4);
+  g.add(under, rim);
   const plate = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.07, 0.012), new THREE.MeshStandardMaterial({ color: '#cfcac2', metalness: 1, roughness: 0.22 }));
   plate.position.set(0, 0.82, 1.885);
   g.add(plate);
@@ -509,10 +520,49 @@ document.querySelectorAll('#filters button').forEach(b => b.addEventListener('cl
   document.querySelectorAll('#filters button').forEach(x => x.classList.toggle('on', x === b));
   const f = b.dataset.f;
   document.querySelectorAll('#grid .card').forEach(c => c.classList.toggle('hide', f !== 'all' && c.dataset.cat !== f));
-  ScrollTrigger.refresh();
+  track.scrollTo({ left: 0 });
+  carState();
 }));
-gsap.utils.toArray('#grid .card').forEach(c => {
-  gsap.from(c, { y: 60, opacity: 0, duration: 1.3, ease: 'expo.out', scrollTrigger: { trigger: c, start: 'top 92%' } });
+gsap.set('#grid .card', { x: 80, opacity: 0 });
+new IntersectionObserver((ents, io) => {
+  if (!ents[0].isIntersecting) return;
+  gsap.to('#grid .card', { x: 0, opacity: 1, duration: 1.4, stagger: 0.08, ease: 'expo.out' });
+  io.disconnect();
+}, { threshold: 0.15 }).observe(document.getElementById('grid'));
+
+const track = document.getElementById('grid');
+const step = () => (track.querySelector('.card:not(.hide)')?.offsetWidth || 300) + 24;
+const carState = () => {
+  const max = track.scrollWidth - track.clientWidth;
+  const p = max > 0 ? track.scrollLeft / max : 0;
+  document.querySelector('.car-bar i').style.transform = `scaleX(${Math.max(0.08, p)})`;
+  document.querySelector('.car-prev').disabled = track.scrollLeft < 4;
+  document.querySelector('.car-next').disabled = track.scrollLeft > max - 4;
+};
+document.querySelector('.car-prev').onclick = () => track.scrollBy({ left: -step(), behavior: 'smooth' });
+document.querySelector('.car-next').onclick = () => track.scrollBy({ left: step(), behavior: 'smooth' });
+track.addEventListener('scroll', carState, { passive: true });
+addEventListener('resize', carState);
+carState();
+
+// перетаскивание мышью; на тач-экранах работает родной свайп
+let pull = null;
+track.addEventListener('pointerdown', e => {
+  if (e.pointerType !== 'mouse') return;
+  pull = { x: e.clientX, left: track.scrollLeft, moved: false };
+  track.classList.add('drag');
+});
+addEventListener('pointermove', e => {
+  if (!pull) return;
+  const dx = e.clientX - pull.x;
+  if (Math.abs(dx) > 5) pull.moved = true;
+  track.scrollLeft = pull.left - dx;
+});
+addEventListener('pointerup', () => {
+  if (!pull) return;
+  track.classList.remove('drag');
+  if (pull.moved) track.addEventListener('click', e => e.preventDefault(), { capture: true, once: true });
+  pull = null;
 });
 
 const mq = document.getElementById('mq');
@@ -522,15 +572,17 @@ gsap.to(mq, { xPercent: -50, duration: 34, ease: 'none', repeat: -1 });
 reveals();
 
 /* ================= старт ================= */
-const logoEl = document.querySelector('.loader-logo');
-logoEl.innerHTML = [...logoEl.textContent].map(ch => `<span>${ch === ' ' ? '&nbsp;' : ch}</span>`).join('');
-gsap.to('.loader-logo span', { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, stagger: 0.05, ease: 'expo.out' });
+const slogan = document.querySelector('.loader-slogan');
+slogan.innerHTML = slogan.textContent.split(' ').map(w => `<span>${w}</span>`).join(' ');
+gsap.timeline()
+  .to('.loader-logo', { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.4, ease: 'expo.out' })
+  .to('.loader-slogan span', { opacity: 1, y: 0, duration: 1, stagger: 0.07, ease: 'expo.out' }, '-=0.7');
 
 await setModel('lava');
 frame();
 const ld = { p: 0 };
 gsap.to(ld, {
-  p: 1, duration: 1.8, ease: 'power2.inOut',
+  p: 1, duration: 2.8, ease: 'power2.inOut',
   onUpdate: () => (document.querySelector('.loader-bar i').style.transform = `scaleX(${ld.p})`),
   onComplete: () => {
     gsap.timeline()

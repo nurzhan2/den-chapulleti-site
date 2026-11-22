@@ -138,6 +138,7 @@ http.createServer(async (req, res) => {
     return ex ? send(res, 200, views.exhibit(ex, base)) : send(res, 404, views.notFound(base));
   }
 
+  if (p === '/bar') return sendFile(req, res, path.join(PUB, 'bar.html'));
   if (p === '/robots.txt') {
     return send(res, 200, `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${base}/sitemap.xml\n`, 'text/plain; charset=utf-8');
   }

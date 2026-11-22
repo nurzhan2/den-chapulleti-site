@@ -185,7 +185,8 @@ function home(base) {
 
   const body = `
 <div class="loader" id="loader">
-  <div class="loader-logo">DEN CHAPULLETI</div>
+  ${has('logo.svg') ? '<img class="loader-logo" src="/media/logo.svg" alt="DEN CHAPULLETI">' : '<div class="loader-logo">DEN CHAPULLETI</div>'}
+  <p class="loader-slogan"${en('New luxury is living in eco-friendly, lasting interiors')}>Новая роскошь — жить в экологичных и долговечных интерьерах</p>
   <div class="loader-bar"><i></i></div>
 </div>
 
@@ -289,8 +290,13 @@ ${vid ? `<video class="hero-video" id="heroVideo" autoplay muted loop playsinlin
         ${used.map(c => `<button data-f="${c}"${en(cats[c].en)}>${cats[c].ru}</button>`).join('')}
       </div>
     </div>
-    <div class="grid" id="grid">
-      ${exhibits.map(card).join('')}
+    <div class="track" id="grid">
+      ${[...exhibits].sort((a, b) => photos(b.slug).length - photos(a.slug).length).map(card).join('')}
+    </div>
+    <div class="car-nav">
+      <button class="car-prev" aria-label="Назад">←</button>
+      <div class="car-bar"><i></i></div>
+      <button class="car-next" aria-label="Вперёд">→</button>
     </div>
   </section>
 
