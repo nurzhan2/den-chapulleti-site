@@ -572,11 +572,7 @@ gsap.to(mq, { xPercent: -50, duration: 34, ease: 'none', repeat: -1 });
 reveals();
 
 /* ================= старт ================= */
-const slogan = document.querySelector('.loader-slogan');
-slogan.innerHTML = slogan.textContent.split(' ').map(w => `<span>${w}</span>`).join(' ');
-gsap.timeline()
-  .to('.loader-logo', { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.4, ease: 'expo.out' })
-  .to('.loader-slogan span', { opacity: 1, y: 0, duration: 1, stagger: 0.07, ease: 'expo.out' }, '-=0.7');
+gsap.to('.loader-logo', { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.6, ease: 'expo.out' });
 
 await setModel('lava');
 frame();

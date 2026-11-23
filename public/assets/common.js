@@ -142,8 +142,14 @@ document.querySelectorAll('.lead-form').forEach(f => {
       i.closest('.field').classList.toggle('err', empty);
       bad ||= empty;
     });
+    const consent = f.querySelector('[name=consent]');
+    if (consent && !consent.checked) {
+      consent.closest('.consent').classList.add('err');
+      msg.textContent = msg.dataset[lang === 'en' ? 'consentEn' : 'consent'];
+      return;
+    }
     if (bad) return;
-    const data = Object.fromEntries(new FormData(f));
+    const { consent: _, ...data } = Object.fromEntries(new FormData(f));
     const btn = f.querySelector('.btn');
     btn.disabled = true;
     let ok = false;
@@ -159,9 +165,10 @@ document.querySelectorAll('.lead-form').forEach(f => {
     const k = (ok ? 'ok' : 'err') + (lang === 'en' ? 'En' : '');
     msg.textContent = msg.dataset[k];
     if (ok) {
-      gsap.to(f.querySelectorAll('.field, .btn'), { opacity: 0, y: -10, stagger: 0.05, duration: 0.4, onComplete: () => f.querySelectorAll('.field, .btn').forEach(x => (x.style.display = 'none')) });
+      gsap.to(f.querySelectorAll('.field, .btn, .consent'), { opacity: 0, y: -10, stagger: 0.05, duration: 0.4, onComplete: () => f.querySelectorAll('.field, .btn, .consent').forEach(x => (x.style.display = 'none')) });
+      msg.classList.add('done');
       gsap.from(msg, { opacity: 0, y: 16, duration: 1, delay: 0.3 });
-      window.ym?.(window.YM_ID, 'reachGoal', 'lead');
+      goal('form_submit');
     }
   });
 });
@@ -183,3 +190,41 @@ export function reveals() {
 
 document.querySelectorAll('.split').forEach(split);
 if (saved === 'en') setLang('en');
+
+/* ---------- цели Метрики ---------- */
+export function goal(name) {
+  if (window.ym && window.METRIKA_ID) window.ym(window.METRIKA_ID, 'reachGoal', name);
+}
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-goal]');
+  if (g) goal(g.dataset.goal);
+  const t = e.target.closest('[data-topic]');
+  if (t) document.querySelectorAll('[name=topic]').forEach(i => (i.value = t.dataset.topic));
+});
+document.querySelectorAll('.consent input').forEach(i => i.addEventListener('change', () => i.closest('.consent').classList.remove('err')));
+
+/* ---------- мобильное меню ---------- */
+const burger = document.getElementById('burger');
+const mnav = document.getElementById('mnav');
+burger?.addEventListener('click', () => {
+  const open = document.body.classList.toggle('menu-open');
+  open ? lenis?.stop() : lenis?.start();
+});
+mnav?.addEventListener('click', e => {
+  if (e.target.closest('a')) {
+    document.body.classList.remove('menu-open');
+    lenis?.start();
+  }
+});
+
+/* ---------- cookie ---------- */
+const ck = document.getElementById('cookie');
+let seen = false;
+try { seen = localStorage.getItem('cookie-ok') === '1'; } catch {}
+if (ck && !seen) {
+  ck.hidden = false;
+  document.getElementById('cookieOk').onclick = () => {
+    try { localStorage.setItem('cookie-ok', '1'); } catch {}
+    ck.hidden = true;
+  };
+}

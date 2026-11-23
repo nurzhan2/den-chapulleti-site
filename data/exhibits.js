@@ -3,11 +3,36 @@
 // tex — параметры временной процедурной текстуры, пока нет фото.
 
 const cats = {
-  tables: { ru: 'Столы-артефакты', en: 'Artifact tables' },
-  sculpture: { ru: 'Монументальная скульптура', en: 'Monumental sculpture' },
+  sculpture: { ru: 'Скульптура из бревна', en: 'Log sculpture' },
+  tables: { ru: 'Столы 10–11 см', en: 'Tables 10–11 cm' },
+  cabinets: { ru: 'Шкафы и барные системы', en: 'Cabinets & bar systems' },
+  seating: { ru: 'Кресла и стулья', en: 'Armchairs & chairs' },
   animal: { ru: 'Анималистика', en: 'Animalier' },
-  marquetry: { ru: 'Художественное маркетри', en: 'Haute marquetry' },
-  architecture: { ru: 'Архитектурные потолки', en: 'Architectural ceilings' },
+  marquetry: { ru: 'Маркетри и потолки', en: 'Marquetry & ceilings' },
+};
+
+// разделы сайта: адрес -> категории внутри
+const sections = {
+  sculpture: { cats: ['sculpture', 'animal'], ru: 'Скульптура', en: 'Sculpture',
+    eyebrowRu: 'Скульптура из цельного бревна', eyebrowEn: 'Sculpture from a single log',
+    h1Ru: 'Монументальная скульптура', h1En: 'Monumental sculpture',
+    leadRu: 'Тотемные и анималистические скульптуры, высеченные вручную из цельного ствола. Каждая работа существует в единственном экземпляре.',
+    leadEn: 'Totemic and animalier sculptures carved by hand from a single trunk. Every piece exists as one of one.' },
+  tables: { cats: ['tables'], ru: 'Столы 10–11 см', en: 'Tables 10–11 cm',
+    eyebrowRu: 'Столы-монолиты', eyebrowEn: 'Monolith tables',
+    h1Ru: 'Столы из цельного массива толщиной 10–11 см', h1En: 'Solid wood tables 10–11 cm thick',
+    leadRu: 'Банкетные, обеденные и журнальные столы из монолитных стволов и слэбов диаметром до 2,1 метра. Опоры и торцы проработаны вручную.',
+    leadEn: 'Banquet, dining and coffee tables from monolithic trunks and slabs up to 2.1 m across. Bases and edges are finished by hand.' },
+  'cabinets-seating': { cats: ['cabinets', 'seating'], ru: 'Шкафы и кресла', en: 'Cabinets & seating',
+    eyebrowRu: 'Коллекционная мебель', eyebrowEn: 'Collectible furniture',
+    h1Ru: 'Шкафы, барные системы и авторские кресла', h1En: 'Cabinets, bar systems and signature armchairs',
+    leadRu: 'Коллекционные шкафы и кресла создаются индивидуально под архитектуру резиденции.',
+    leadEn: 'Collectible cabinets and armchairs are made individually for the architecture of a residence.' },
+  architectural: { cats: ['marquetry'], ru: 'Маркетри и потолки', en: 'Marquetry & ceilings',
+    eyebrowRu: 'Архитектурные работы', eyebrowEn: 'Architectural works',
+    h1Ru: 'Художественное маркетри и потолки', h1En: 'Haute marquetry and ceilings',
+    leadRu: 'Панно, инкрустации и комплекты потолочных балок из серой амбарной доски 2 см — изготавливаем в мастерской под размеры проекта.',
+    leadEn: 'Panels, inlays and ceiling beam kits from 2 cm grey barn board, made in our workshop to project dimensions.' },
 };
 
 const exhibits = [
@@ -38,6 +63,7 @@ const exhibits = [
   },
   {
     slug: 'mahagon-210',
+    edition: 2,
     cat: 'tables',
     status: 'collection',
     title: 'Коллекционный спил африканского махагона',
@@ -358,7 +384,7 @@ const exhibits = [
   },
   {
     slug: 'potolki-ambarnaya-doska',
-    cat: 'architecture',
+    cat: 'marquetry',
     status: 'collection',
     title: 'Архитектурные потолки и балки из серой амбарной доски',
     titleEn: 'Architectural ceilings and beams in grey barn board',
@@ -381,4 +407,4 @@ const exhibits = [
   },
 ];
 
-module.exports = { exhibits, cats };
+module.exports = { exhibits, cats, sections };

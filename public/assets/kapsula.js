@@ -56,7 +56,7 @@ const clip = new THREE.Plane(new THREE.Vector3(0, 0, -1), 10);
 renderer.localClippingEnabled = true;
 
 const parts = {};
-new GLTFLoader().load('/media/bar/bar.glb', gltf => {
+new GLTFLoader().load('/media/bar/kapsula.glb', gltf => {
   gltf.scene.traverse(o => {
     if (!o.isMesh) return;
     o.castShadow = o.receiveShadow = true;

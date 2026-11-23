@@ -71,6 +71,7 @@ function leadText(l) {
     `Имя / бюро: ${l.name}`,
     `Контакт: ${l.contact}`,
     l.location && `Локация: ${l.location}`,
+    l.topic && `Задача: ${l.topic}`,
     l.exhibit && `Экспонат: ${l.exhibit}`,
     l.page && `Страница: ${l.page}`,
   ];
@@ -109,7 +110,7 @@ async function lead(req, res) {
   try { l = JSON.parse(await readBody(req)); } catch { return send(res, 400, '{"ok":false}', 'application/json'); }
   if (l.website) return send(res, 200, '{"ok":true}', 'application/json'); // honeypot
   const clip = s => String(s || '').trim().slice(0, 300);
-  l = { name: clip(l.name), contact: clip(l.contact), location: clip(l.location), exhibit: clip(l.exhibit), page: clip(l.page), utm: l.utm || {} };
+  l = { name: clip(l.name), contact: clip(l.contact), location: clip(l.location), topic: clip(l.topic), exhibit: clip(l.exhibit), page: clip(l.page), utm: l.utm || {} };
   if (!l.name || !l.contact) return send(res, 400, '{"ok":false}', 'application/json');
 
   const text = leadText(l);
@@ -129,7 +130,14 @@ http.createServer(async (req, res) => {
   if (req.method === 'POST' && p === '/api/lead') return lead(req, res);
   if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, '');
 
+  const host = req.headers.host || '';
+  if (host.startsWith('www.')) return send(res, 301, '', 'text/plain', { Location: `https://${host.slice(4)}${req.url}` });
+
   if (p === '/') return send(res, 200, views.home(base));
+  if (views.sections[p.slice(1)]) return send(res, 200, views.section(p.slice(1), base));
+  if (p === '/materials') return send(res, 200, views.materials(base));
+  if (p === '/sculptor') return send(res, 200, views.sculptor(base));
+  if (p === '/privacy') return send(res, 200, views.privacy(base));
   if (legacy.includes(p.replace(/\.html$/, '')) || legacy.includes(p)) return send(res, 301, '', 'text/plain', { Location: '/' });
 
   const m = p.match(/^\/exhibits\/([a-z0-9-]+)$/);
@@ -139,11 +147,12 @@ http.createServer(async (req, res) => {
   }
 
   if (p === '/bar') return sendFile(req, res, path.join(PUB, 'bar.html'));
+  if (p === '/kapsula') return sendFile(req, res, path.join(PUB, 'kapsula.html'));
   if (p === '/robots.txt') {
     return send(res, 200, `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${base}/sitemap.xml\n`, 'text/plain; charset=utf-8');
   }
   if (p === '/sitemap.xml') {
-    const urls = ['/', ...exhibits.map(e => `/exhibits/${e.slug}`)];
+    const urls = ['/', ...Object.keys(views.sections).map(k => `/${k}`), '/materials', '/sculptor', ...exhibits.map(e => `/exhibits/${e.slug}`), '/privacy'];
     const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
       .map(u => `  <url><loc>${base}${u}</loc><changefreq>weekly</changefreq><priority>${u === '/' ? '1.0' : '0.8'}</priority></url>`)
       .join('\n')}\n</urlset>\n`;
