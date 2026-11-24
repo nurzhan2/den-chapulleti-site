@@ -1,27 +1,18 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/jsm/controls/OrbitControls.js';
 
-// форма по кадрам видео: верх со скруглёнными плечами, максимум ширины на линии стойки, круглое дно
-const H = 1.8, R = 0.78, SEAM = 0.43 * H;
-const AX = 0.46;
+// контур снят с кадра видео (px): узкий плоский верх, почти прямые бока, острое ребро по линии стойки, скруглённый низ
+const K = 1.8 / 500, Y0 = 1048;
+const UP = [[548, 0], [549, 100], [553, 115], [562, 127], [578, 137], [600, 144], [650, 162], [700, 178], [750, 196], [800, 213], [848, 223]];
+const LOW = [[848, 223], [875, 216], [900, 205], [950, 180], [1000, 140], [1025, 108], [1040, 72], [1047, 30], [1048, 0]];
+const seg = list => new THREE.SplineCurve(list.map(([y, r]) => new THREE.Vector2(r * K, (Y0 - y) * K))).getPoints(60);
+const prof = [...seg(LOW).reverse(), ...seg(UP).reverse().slice(1)].map(v => [v.y, v.x]);
+const H = prof[prof.length - 1][0], R = 223 * K, SEAM = (Y0 - 848) * K;
+const AX = 0.49;
 const DEPTH = 0.6;
 const LIFT = 0.33;
 const WING = THREE.MathUtils.degToRad(65);
 const GAP = THREE.MathUtils.degToRad(1.4);
-const prof = [];
-for (let i = 0; i <= 120; i++) {
-  const y = H * i / 120, u = (H - y) / H;
-  let r;
-  if (u <= 0.57) {
-    const t = 0.85 * (1 - u / 0.57);
-    r = R * Math.sqrt(1 - t * t);
-  } else {
-    const v = (u - 0.57) / 0.43;
-    r = R * Math.max(1 - v ** 2.2, 0) ** (1 / 2.2);
-  }
-  prof.push([y, r]);
-}
-prof[prof.length - 1][1] = 0;
 const rAt = y => {
   if (y <= 0 || y >= H) return 0;
   for (let i = 1; i < prof.length; i++) {
@@ -117,7 +108,7 @@ const shell = (y0, y1, p0, len, inner = burgundy) => {
 };
 
 egg.add(shell(0, SEAM, 0, Math.PI * 2, darkIn));
-const CROWN = H * 119 / 120;
+const CROWN = H - 0.004;
 egg.add(shell(SEAM, CROWN, WING, Math.PI * 2 - 2 * WING, darkIn));
 egg.add(shell(CROWN, H, 0, Math.PI * 2, darkIn));
 
@@ -157,43 +148,48 @@ const hwAt = y => rAt(y) * Math.sqrt(Math.max(1 - (ZP / (DEPTH * rAt(y) + 1e-6))
   for (let y = SEAM; y <= yT; y += 0.02) ys.push(y);
   ys.forEach((y, i) => (i ? outer.lineTo(hwAt(y) - 0.004, y) : outer.moveTo(hwAt(y) - 0.004, y)));
   [...ys].reverse().forEach(y => outer.lineTo(-hwAt(y) + 0.004, y));
-  const rr = (x0, y0, x1, y1, r) => {
-    const p = new THREE.Path();
-    p.moveTo(x0 + r, y0); p.lineTo(x1 - r, y0); p.quadraticCurveTo(x1, y0, x1, y0 + r);
-    p.lineTo(x1, y1 - r); p.quadraticCurveTo(x1, y1, x1 - r, y1); p.lineTo(x0 + r, y1);
-    p.quadraticCurveTo(x0, y1, x0, y1 - r); p.lineTo(x0, y0 + r); p.quadraticCurveTo(x0, y0, x0 + r, y0);
-    return p;
+  // проём по контуру корпуса со скруглёнными верхними углами
+  const contour = (P, y0, y1, fx, rc) => {
+    const n = 16, top = y1 - rc;
+    P.moveTo(-fx(y0), y0);
+    P.lineTo(fx(y0), y0);
+    for (let i = 1; i <= n; i++) { const y = y0 + (top - y0) * i / n; P.lineTo(fx(y), y); }
+    P.quadraticCurveTo(fx(top), y1, fx(top) - rc, y1);
+    P.lineTo(-fx(top) + rc, y1);
+    P.quadraticCurveTo(-fx(top), y1, -fx(top), top);
+    for (let i = n - 1; i >= 0; i--) { const y = y0 + (top - y0) * i / n; P.lineTo(-fx(y), y); }
+    return P;
   };
-  const wUp = Math.min(hwAt(yT - 0.05), hwAt(yShelf)) - 0.025;
-  const wLo = hwAt(SEAM + 0.15) - 0.06;
-  outer.holes.push(rr(-wUp, yShelf, wUp, yT - 0.02, 0.07));
-  outer.holes.push(rr(-wLo, SEAM + 0.005, wLo, yBand, 0.05));
+  const inset = y => hwAt(y) - 0.035;
+  const inner = y => rAt(y) * 0.96;
+  outer.holes.push(contour(new THREE.Path(), yShelf, yT - 0.02, inset, 0.08));
+  outer.holes.push(contour(new THREE.Path(), SEAM + 0.005, yBand, inset, 0.05));
   const portal = new THREE.Mesh(new THREE.ShapeGeometry(outer, 24), new THREE.MeshStandardMaterial({ color: '#2a0a12', roughness: 0.4, metalness: 0.3 }));
   portal.position.z = ZP;
   egg.add(portal);
 
-  const back = (x0, y0, x1, y1, m) => {
-    const b = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, y1 - y0), m);
-    b.position.set((x0 + x1) / 2, (y0 + y1) / 2, -0.02);
+  const back = (y0, y1, m) => {
+    const b = new THREE.Mesh(new THREE.ShapeGeometry(contour(new THREE.Shape(), y0, y1, inner, 0.08), 16), m);
+    b.position.z = -0.02;
     egg.add(b);
   };
-  back(-wUp, yShelf, wUp, yT, pink);
-  back(-wLo, SEAM, wLo, yBand, red);
+  back(yShelf, yT, pink);
+  back(SEAM, yBand, red);
 
   const bh = yBand - SEAM, yb = SEAM + bh * 0.55;
   const m = new THREE.Shape();
-  m.moveTo(-wLo, SEAM);
-  m.lineTo(-wLo, yb);
+  m.moveTo(-inner(SEAM), SEAM);
+  for (let i = 1; i <= 8; i++) { const y = SEAM + (yb - SEAM) * i / 8; m.lineTo(-inner(y), y); }
   m.lineTo(-0.42, yb);
   m.bezierCurveTo(-0.25, yb, -0.25, yBand - 0.01, -0.12, yBand - 0.01);
   m.lineTo(0.12, yBand - 0.01);
   m.bezierCurveTo(0.25, yBand - 0.01, 0.25, yb, 0.42, yb);
-  m.lineTo(wLo, yb);
-  m.lineTo(wLo, SEAM);
+  for (let i = 8; i >= 0; i--) { const y = SEAM + (yb - SEAM) * i / 8; m.lineTo(inner(y), y); }
   const hill = new THREE.Mesh(new THREE.ShapeGeometry(m, 24), pink);
   hill.position.z = -0.015;
   egg.add(hill);
 
+  const wUp = inset(yShelf);
   const shelf = new THREE.Mesh(new THREE.BoxGeometry(wUp * 2, 0.025, 0.18), frameMat);
   shelf.position.set(0, yShelf, 0.07);
   egg.add(shelf);
@@ -212,11 +208,11 @@ const hwAt = y => rAt(y) * Math.sqrt(Math.max(1 - (ZP / (DEPTH * rAt(y) + 1e-6))
   egg.add(pl);
 }
 
-// крылья: поворот вокруг наружной кромки (от верхнего угла к стойке), ложатся по бокам изнанкой вперёд
-const cfg = { open: 125, tilt: 0.3 };
+// крылья: сначала приподнимаются от верхних углов наружу, потом разворачиваются вокруг наружной кромки изнанкой вперёд
+const cfg = { lift: 12, open: 105, tilt: 0.6 };
 const wings = [];
 const buildWings = () => {
-  for (const w of wings) egg.remove(w.pivot);
+  for (const w of wings) egg.remove(w.lift);
   wings.length = 0;
   for (const sx of [1, -1]) {
     const g = sx > 0 ? shell(SEAM, CROWN, GAP, WING - GAP) : shell(SEAM, CROWN, Math.PI * 2 - WING, WING - GAP);
@@ -224,22 +220,29 @@ const buildWings = () => {
     const a = edge(CROWN), b = edge(SEAM);
     b.x = a.x + (b.x - a.x) * cfg.tilt;
     const axis = a.clone().sub(b).normalize();
-    const pivot = new THREE.Group();
-    pivot.position.copy(a);
+    const lift = new THREE.Group(), turn = new THREE.Group();
+    lift.position.copy(a);
     g.position.copy(a).negate();
-    pivot.add(g);
-    egg.add(pivot);
+    turn.add(g);
+    lift.add(turn);
+    egg.add(lift);
     const mid = new THREE.Vector3(sx * 0.15, (SEAM + H) / 2, DEPTH * rAt((SEAM + H) / 2)).sub(a);
     const dir = mid.clone().applyAxisAngle(axis, Math.PI / 2).x * sx > mid.clone().applyAxisAngle(axis, -Math.PI / 2).x * sx ? 1 : -1;
-    wings.push({ pivot, axis, dir });
+    wings.push({ lift, turn, axis, dir, sx });
   }
 };
 buildWings();
 
+const Z = new THREE.Vector3(0, 0, 1);
+const ease = (e, a, b) => { const t = Math.min(Math.max((e - a) / (b - a), 0), 1); return t * t * (3 - 2 * t); };
 let cur = 0, target = 0;
 const setOpen = e => {
   pl.intensity = 0.4 + 2.2 * e;
-  for (const w of wings) w.pivot.quaternion.setFromAxisAngle(w.axis, w.dir * THREE.MathUtils.degToRad(cfg.open) * e);
+  const up = ease(e, 0, 0.6), flip = ease(e, 0.15, 1);
+  for (const w of wings) {
+    w.lift.quaternion.setFromAxisAngle(Z, w.sx * THREE.MathUtils.degToRad(cfg.lift) * up);
+    w.turn.quaternion.setFromAxisAngle(w.axis, w.dir * THREE.MathUtils.degToRad(cfg.open) * flip);
+  }
 };
 window.eggOpen = v => { buildWings(); cur = target = v; setOpen(v); };
 window.eggCfg = cfg;
@@ -277,7 +280,7 @@ btn('load').classList.add('done');
 
 renderer.setAnimationLoop(() => {
   cur += (target - cur) * 0.04;
-  setOpen(cur * cur * (3 - 2 * cur));
+  setOpen(cur);
   controls.update();
   renderer.render(scene, cam);
 });
