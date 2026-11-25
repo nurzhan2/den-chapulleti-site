@@ -147,7 +147,6 @@ http.createServer(async (req, res) => {
   }
 
   if (p === '/bar') return sendFile(req, res, path.join(PUB, 'bar.html'));
-  if (p === '/bar-v2') return sendFile(req, res, path.join(PUB, 'bar-v2.html'));
   if (p === '/kapsula') return sendFile(req, res, path.join(PUB, 'kapsula.html'));
   if (p === '/robots.txt') {
     return send(res, 200, `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${base}/sitemap.xml\n`, 'text/plain; charset=utf-8');
