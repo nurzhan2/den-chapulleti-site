@@ -11,7 +11,7 @@
   --glow-gold: 0 0 24px rgba(200, 164, 93, .22);
   --glow-lava: 0 0 50px rgba(217, 78, 31, .18);
   --serif: 'Cormorant Garamond', serif;
-  --display: 'Forum', 'Cormorant Garamond', serif;
+  --display: 'Cormorant Garamond', serif;
   --sans: 'Manrope', system-ui, sans-serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
   --pad: clamp(20px, 6vw, 96px);
@@ -33,7 +33,7 @@ button { font: inherit; color: inherit; }
 .h1 { font-size: clamp(42px, min(8.4vw, 12.5vh), 138px); margin-top: 22px; }
 .h2 { font-size: clamp(40px, 5.4vw, 88px); margin: 22px 0 26px; }
 .h1 em, .h2 em, .h1-ex em, .big em { font-style: italic; color: var(--text-primary); }
-.eyebrow { font-family: var(--display); font-size: 11px; letter-spacing: .42em; color: var(--text-accent); text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+.eyebrow { font-family: var(--display); font-weight: 500; font-size: 11px; letter-spacing: .42em; color: var(--text-accent); text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
 .eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--text-accent); flex: none; }
 .num { font-family: var(--display); font-size: 11px; letter-spacing: .3em; color: var(--text-accent); }
 .lead { font-size: clamp(15px, 1.2vw, 17px); line-height: 1.75; color: var(--text-secondary); max-width: 460px; }
@@ -291,9 +291,6 @@ button { font: inherit; color: inherit; }
   .ftr-logo { height: 72px; }
 }
 
-html[data-font="2"] { --serif: 'Tenor Sans', sans-serif; }
-html[data-font="2"] .h1, html[data-font="2"] .h2, html[data-font="2"] .h1-ex { letter-spacing: .01em; }
-html[data-font="2"] em { font-style: normal; color: var(--text-accent); }
 
 .track { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; padding-bottom: 4px; }
 .track::-webkit-scrollbar { display: none; }

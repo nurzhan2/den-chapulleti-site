@@ -86,13 +86,10 @@ function layout({ base, title, desc, canonical, og, jsonld, body, page, script, 
 <link rel="stylesheet" href="/fonts/cormorant-garamond/400.css">
 <link rel="stylesheet" href="/fonts/cormorant-garamond/400-italic.css">
 <link rel="stylesheet" href="/fonts/cormorant-garamond/500.css">
-<link rel="stylesheet" href="/fonts/forum/400.css">
 <link rel="stylesheet" href="/fonts/manrope/300.css">
 <link rel="stylesheet" href="/fonts/manrope/400.css">
 <link rel="stylesheet" href="/fonts/manrope/500.css">
 <link rel="stylesheet" href="/fonts/manrope/600.css">
-<link rel="stylesheet" href="/fonts/tenor-sans/400.css">
-<script>(()=>{const q=new URLSearchParams(location.search).get('font');try{q?sessionStorage.setItem('font',q):0}catch(e){}let f=q;try{f=f||sessionStorage.getItem('font')}catch(e){}if(f)document.documentElement.dataset.font=f})()</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script type="importmap">{"imports":{"three":"/vendor/three.module.min.js","three/jsm/":"/vendor/jsm/"}}</script>
 ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script>` : ''}
