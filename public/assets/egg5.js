@@ -1,20 +1,20 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/jsm/controls/OrbitControls.js';
 
-// контур снят с кадра видео (px): узкий плоский верх, почти прямые бока, острое ребро по линии стойки, скруглённый низ
+// контур снят с кадра видео (px): узкий плоский верх, бока плавно переходят в круглый низ без ребра на стойке
 // высота по размерам заказчика: 2000 мм, пояс на 820 мм от низа, ширина 1600
 const Y0 = 1048, YS = 848, Kr = 1.6 / 446;
 const ym = px => px >= YS ? (Y0 - px) * 0.82 / 200 : 0.82 + (YS - px) * 1.18 / 300;
 const UP = [[548, 0], [549, 100], [553, 115], [562, 127], [578, 137], [600, 144], [650, 162], [700, 178], [750, 196], [800, 213], [848, 223]];
 const LOW = [[848, 223], [875, 216], [900, 205], [950, 180], [1000, 140], [1025, 108], [1040, 72], [1047, 30], [1048, 0]];
-const seg = list => new THREE.SplineCurve(list.map(([y, r]) => new THREE.Vector2(r * Kr, ym(y)))).getPoints(60);
-const prof = [...seg(LOW).reverse(), ...seg(UP).reverse().slice(1)].map(v => [v.y, v.x]);
+const seg = list => new THREE.SplineCurve(list.map(([y, r]) => new THREE.Vector2(r * Kr, ym(y)))).getPoints(160);
+const prof = seg([...UP, ...LOW.slice(1)]).reverse().map(v => [v.y, v.x]);
 const H = prof[prof.length - 1][0], R = 223 * Kr, SEAM = 0.82;
 const AX = 0.49;
 const DEPTH = 0.6;
 const LIFT = 0.3;
 const WING = THREE.MathUtils.degToRad(65);
-const GAP = THREE.MathUtils.degToRad(1.1);
+const GAP = THREE.MathUtils.degToRad(0.03);
 const rAt = y => {
   if (y <= 0 || y >= H) return 0;
   for (let i = 1; i < prof.length; i++) {
@@ -109,29 +109,109 @@ const shell = (y0, y1, p0, len, inner = burgundy) => {
   return grp;
 };
 
-egg.add(shell(0, SEAM, 0, Math.PI * 2, darkIn));
+// чаша: корпус, по центру дверца с полками за ней, по бокам выдвижные ящики
+const HW = 0.35, DY0 = 0.16, DY1 = SEAM - 0.04, DYD = 0.47, SL = 0.008;
+const bowl = (() => {
+  const prt = part(0.0005, SEAM), nt = 256, pos = [], groups = { body: [], door: [], dl: [], dr: [] };
+  for (const p of prt) for (let j = 0; j <= nt; j++) {
+    const a = Math.PI * 2 * j / nt;
+    pos.push(p.x * Math.sin(a), p.y, DEPTH * p.x * Math.cos(a));
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  const v = k => new THREE.Vector3(pos[k * 3], pos[k * 3 + 1], pos[k * 3 + 2]);
+  const kind = c => {
+    if (c.z < 0.05) return 'body';
+    const ax = Math.abs(c.x);
+    if (ax < HW - SL && c.y > DY0 + SL && c.y < DY1 - SL) return 'door';
+    if (ax > HW + SL && c.y > DYD + SL && c.y < DY1 - SL && Math.atan2(ax, c.z / DEPTH) < 1.2) return c.x > 0 ? 'dr' : 'dl';
+    return 'body';
+  };
+  const all = [];
+  for (let i = 0; i < prt.length - 1; i++) for (let j = 0; j < nt; j++) {
+    const a = i * (nt + 1) + j, b = a + nt + 1;
+    const c = v(a).add(v(b)).add(v(a + 1)).add(v(b + 1)).multiplyScalar(0.25);
+    const q = [a, a + 1, b, b, a + 1, b + 1];
+    all.push(...q);
+    groups[kind(c)].push(...q);
+  }
+  g.setIndex(all);
+  g.computeVertexNormals();
+  const out = {};
+  for (const k in groups) {
+    const gg = new THREE.BufferGeometry();
+    gg.setAttribute('position', g.attributes.position);
+    gg.setAttribute('normal', g.attributes.normal);
+    gg.setIndex(groups[k]);
+    const m = new THREE.Group();
+    m.add(new THREE.Mesh(gg, chrome), new THREE.Mesh(gg, darkIn));
+    out[k] = m;
+  }
+  return out;
+})();
+egg.add(bowl.body);
+
+const cab = new THREE.MeshStandardMaterial({ color: '#2a1a12', roughness: 0.7 });
+const zAt = (x, y) => DEPTH * Math.sqrt(Math.max(rAt(y) ** 2 - x * x, 0));
+const seamMat = new THREE.LineBasicMaterial({ color: '#0b0b0b' });
+const onS = (x, y) => new THREE.Vector3(x, y, zAt(x, y) + 0.002);
+const seam = pts3 => new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts3), seamMat);
+const run = (n, f) => Array.from({ length: n + 1 }, (_, i) => f(i / n));
+const door = new THREE.Group();
+{
+  const a = -HW + SL, b = HW - SL, lo = DY0 + SL, hi = DY1 - SL;
+  bowl.door.add(seam([...run(24, t => onS(a + (b - a) * t, hi)), ...run(24, t => onS(b, hi - (hi - lo) * t)), ...run(24, t => onS(b - (b - a) * t, lo)), ...run(24, t => onS(a, lo + (hi - lo) * t))]));
+  const yc = (DY0 + DY1) / 2, piv = new THREE.Vector3(-HW, yc, zAt(HW, yc));
+  door.position.copy(piv);
+  bowl.door.position.copy(piv).negate();
+  door.add(bowl.door);
+  egg.add(door);
+  // шкафчик за дверцей
+  const zb = -0.12, d = zAt(HW, DY0) - 0.02 - zb, h = DY1 - DY0;
+  const box = (w, hh, dd, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, hh, dd), cab); m.position.set(x, y, z); egg.add(m); };
+  box(HW * 2, h, 0.02, 0, DY0 + h / 2, zb);
+  for (const sx of [-1, 1]) box(0.02, h, d, sx * (HW - 0.01), DY0 + h / 2, zb + d / 2);
+  for (const t of [0, 1 / 3, 2 / 3, 1]) box(HW * 2 - 0.02, 0.02, d, 0, DY0 + 0.01 + (h - 0.02) * t, zb + d / 2);
+  const glass = new THREE.MeshStandardMaterial({ color: '#3a1c10', roughness: 0.15, metalness: 0.2 });
+  [[-0.18, 0.2, 1], [-0.06, 0.24, 1], [0.12, 0.18, 1], [-0.15, 0.12, 2], [0.05, 0.12, 2], [0.2, 0.12, 2]].forEach(([x, bh, k]) => {
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.035, bh, 16), glass);
+    b.position.set(x, DY0 + 0.02 + (h - 0.02) * k / 3 + bh / 2, 0.02);
+    egg.add(b);
+  });
+  const lamp = new THREE.PointLight('#ffb27a', 0, 1.2, 1.5);
+  lamp.position.set(0, DY1 - 0.08, 0.3);
+  egg.add(lamp);
+  door.userData.lamp = lamp;
+}
+// ящики: передняя панель и короб за ней выезжают вперёд
+const drawers = [bowl.dl, bowl.dr].map((front, i) => {
+  const sx = i ? 1 : -1, g = new THREE.Group(), yc = (DYD + DY1) / 2, x0 = HW + 0.02, x1 = rAt(DYD) * 0.8;
+  g.add(front);
+  const xe = y => rAt(y) * Math.sin(1.2), a = HW + SL, lo = DYD + SL, hi = DY1 - SL;
+  front.add(seam([
+    ...run(16, t => onS(sx * (a + (xe(hi) - a) * t), hi)),
+    ...run(16, t => { const y = hi - (hi - lo) * t; return onS(sx * xe(y), y); }),
+    ...run(16, t => onS(sx * (xe(lo) - (xe(lo) - a) * t), lo)),
+    ...run(8, t => onS(sx * a, lo + (hi - lo) * t)),
+  ]));
+  const w = x1 - x0, zf = zAt(x1, DYD) - 0.03, bx = new THREE.Mesh(new THREE.BoxGeometry(w, DY1 - DYD - 0.03, 0.25), cab);
+  bx.position.set(sx * (x0 + w / 2), yc, zf - 0.125);
+  g.add(bx);
+  egg.add(g);
+  return g;
+});
+
 const CROWN = H - 0.004;
 egg.add(shell(SEAM, CROWN, WING, Math.PI * 2 - 2 * WING, darkIn));
 egg.add(shell(CROWN, H, 0, Math.PI * 2, darkIn));
 
-// фасад чаши: дверца по центру, по бокам ящики, линия разъёма под стойкой
+// линия разъёма под стойкой
 {
-  const hw = 0.35, y0 = 0.1, y1 = SEAM - 0.04, yd = 0.47;
-  const on = (x, y) => new THREE.Vector3(x, y, DEPTH * Math.sqrt(Math.max(rAt(y) ** 2 - x * x, 0)) + 0.002);
-  const ln = new THREE.LineBasicMaterial({ color: '#111' });
-  const add = pts => egg.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), ln));
-  const run = (n, f) => Array.from({ length: n + 1 }, (_, i) => f(i / n));
-  add([
-    ...run(20, t => on(-hw + 2 * hw * t, y1)),
-    ...run(20, t => on(hw, y1 - (y1 - y0) * t)),
-    ...run(20, t => on(hw - 2 * hw * t, y0)),
-    ...run(20, t => on(-hw, y0 + (y1 - y0) * t)),
-  ]);
-  for (const sx of [1, -1]) add(run(16, t => on(sx * (hw + (rAt(yd) * 0.985 - hw) * t), yd)));
-  add(run(128, t => {
-    const a = Math.PI * 2 * t, r = rAt(SEAM - 0.01) + 0.003;
+  const pts3 = Array.from({ length: 129 }, (_, i) => {
+    const a = Math.PI * 2 * i / 128, r = rAt(SEAM - 0.01) + 0.003;
     return new THREE.Vector3(r * Math.sin(a), SEAM - 0.01, DEPTH * r * Math.cos(a));
-  }));
+  });
+  egg.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts3), new THREE.LineBasicMaterial({ color: '#111' })));
 }
 
 // стойка с круглой вставкой
@@ -248,7 +328,10 @@ const ease = (e, a, b) => { const t = Math.min(Math.max((e - a) / (b - a), 0), 1
 let cur = 0, target = 0;
 const setOpen = e => {
   pl.intensity = 0.4 + 2.2 * e;
-  const up = ease(e, 0, 0.6), flip = ease(e, 0.15, 1);
+  const up = ease(e, 0, 0.6), flip = ease(e, 0.15, 1), low = ease(e, 0.3, 0.9);
+  door.rotation.y = -THREE.MathUtils.degToRad(100) * low;
+  door.userData.lamp.intensity = 1.6 * low;
+  for (const d of drawers) d.position.z = 0.24 * low;
   for (const w of wings) {
     w.lift.quaternion.setFromAxisAngle(Z, w.sx * THREE.MathUtils.degToRad(cfg.lift) * up);
     w.turn.quaternion.setFromAxisAngle(w.axis, w.dir * THREE.MathUtils.degToRad(cfg.open) * flip);
