@@ -450,3 +450,31 @@ html[data-font="2"] em { font-style: normal; color: var(--text-accent); }
   .hero-in { text-shadow: 0 2px 24px #050505, 0 0 40px #050505; }
   .cookie { gap: 12px; font-size: 11px; padding: 12px 14px; }
 }
+
+/* загрузка: монограмма, имя, слоган по центру */
+.loader { text-align: center; gap: 22px; }
+.loader-mono { width: clamp(84px, 9vw, 120px); height: auto; opacity: 0; clip-path: inset(0 0 100% 0); }
+.loader-name { font-family: var(--display); font-size: clamp(20px, 3.4vw, 38px); letter-spacing: .42em; margin-right: -.42em; color: var(--text-primary); opacity: 0; }
+.loader .loader-slogan { font-family: var(--sans); font-style: normal; font-size: clamp(11px, 1vw, 13px); letter-spacing: .2em; color: var(--text-secondary); max-width: min(560px, 86vw); margin: 0; opacity: 0; }
+
+/* шапка: подпись бренда всегда, на узких экранах под логотипом */
+@media (max-width: 1600px) {
+  .brand-sub { display: block; border-left: 0; padding-left: 0; font-size: 7.5px; letter-spacing: .26em; }
+  .hdr .brand { flex-direction: column; align-items: flex-start; gap: 5px; }
+}
+@media (max-width: 820px) {
+  .hdr .btn-sm.hdr-cta { display: inline-flex; padding: 9px 11px; font-size: 8.5px; letter-spacing: .14em; }
+  .hdr .lang { display: none; }
+  .hdr .brand-logo { height: 15px; width: auto; }
+  .brand-sub { font-size: 6.5px; letter-spacing: .2em; }
+}
+
+/* подвал */
+.ftr-brand { display: flex; flex-direction: column; gap: 14px; max-width: 360px; }
+.ftr-brand .brand { flex-direction: row; align-items: center; gap: 14px; }
+.ftr-mono { width: 54px; height: auto; }
+.ftr-name { font-family: var(--display); font-size: 15px; letter-spacing: .38em; }
+.ftr-slogan { font-family: var(--serif); font-style: italic; font-size: 17px; line-height: 1.45; color: var(--text-secondary); }
+.audit-wa { margin-top: 18px; }
+.mnav-lang { font-size: 13px; }
+.manifest > .eyebrow { justify-content: center; }

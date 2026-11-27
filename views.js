@@ -142,6 +142,7 @@ function header(page) {
 </header>
 <div class="mnav" id="mnav">
   <nav>${links}<a href="#audit"${en('Private request')}>Приватный запрос</a></nav>
+  <div class="lang mnav-lang"><button data-lang="ru" class="on">RU</button>/<button data-lang="en">EN</button></div>
   <a class="mnav-wa" href="${esc(wa())}" target="_blank" rel="noopener" data-goal="whatsapp_click">WhatsApp · ${esc(contacts.whatsappLabel)}</a>
 </div>`;
 }
@@ -151,7 +152,7 @@ function footer() {
   const req = [l.name, l.inn && `ИНН ${l.inn}`, l.ogrn && `ОГРНИП ${l.ogrn}`].filter(Boolean).join(' • ');
   return `<footer class="ftr">
   <div class="ftr-top">
-    <a class="brand" href="/">${has('logo-vert.svg') ? '<img class="ftr-logo" src="/media/logo-vert.svg" alt="DEN CHAPULLETI — Новая роскошь: жить в экологичных и долговечных интерьерах">' : logo()}</a>
+    <div class="ftr-brand"><a class="brand" href="/"><img class="ftr-mono" src="/media/monogram.svg" alt=""><span class="ftr-name">DEN CHAPULLETI</span></a><p class="ftr-slogan"${en('New luxury is living in sustainable, lasting interiors')}>Новая роскошь — жить в экологичных и долговечных интерьерах</p></div>
     <div class="ftr-cols">
       <div class="ftr-links">
         ${NAV.map(([u, ru, e]) => `<a href="${u}"${en(e)}>${ru}</a>`).join('')}
@@ -178,7 +179,6 @@ function auditForm(exhibit, topic) {
       <div class="eyebrow"${en('A private dialogue with the manufacture')}>Приватный диалог с мануфактурой</div>
       <h2 class="h2"${enh('Discuss a commission<br><em>or request the private catalogue</em>')}>Обсудить создание объекта<br><em>или запросить закрытый каталог</em></h2>
       <p class="lead"${en('Leave your contacts — we will send a private presentation of available pieces, workshop videos, or discuss a commission with the sculptor.')}>Оставьте контакты — мы направим закрытую презентацию доступных экспонатов, видео из мастерской или обсудим индивидуальный заказ со скульптором.</p>
-      <a class="audit-wa" href="${esc(wa(exhibit ? `Здравствуйте! Интересует «${exhibit}» (denchapulleti.ru). Подскажите, пожалуйста, статус и детали.` : 'Здравствуйте! Пишу с сайта DEN CHAPULLETI.'))}" target="_blank" rel="noopener" data-goal="whatsapp_click"><span${en('Message us directly on WhatsApp')}>Написать напрямую в WhatsApp</span> · ${esc(contacts.whatsappLabel)}</a>
     </div>
     <form class="lead-form" data-exhibit="${esc(exhibit || '')}" novalidate>
       <div class="field"><input name="name" id="f-name" placeholder=" " required autocomplete="name"><label for="f-name"${en('Your name or architectural studio')}>Ваше имя или архитектурное бюро</label></div>
@@ -187,6 +187,7 @@ function auditForm(exhibit, topic) {
       <input class="hp" name="website" tabindex="-1" autocomplete="off">
       <label class="consent"><input type="checkbox" name="consent" required><span${enh('I agree to the processing of personal data under the <a href="/privacy">privacy policy</a>')}>Согласен на обработку персональных данных в соответствии с <a href="/privacy">политикой конфиденциальности</a></span></label>
       <button class="btn" type="submit"><span class="dot"></span><span${en('Send request')}>Отправить запрос</span></button>
+      <a class="audit-wa" href="${esc(wa(exhibit ? `Здравствуйте! Интересует «${exhibit}» (denchapulleti.ru). Подскажите, пожалуйста, статус и детали.` : 'Здравствуйте! Пишу с сайта DEN CHAPULLETI.'))}" target="_blank" rel="noopener" data-goal="whatsapp_click"><span${en('Message us directly on WhatsApp')}>Написать напрямую в WhatsApp</span> · ${esc(contacts.whatsappLabel)}</a>
       <p class="form-msg" data-ok="Запрос получен. Консьерж мануфактуры свяжется с вами лично в течение рабочего дня." data-ok-en="Request received. The manufacture’s concierge will contact you personally within one business day." data-err="Не удалось отправить. Напишите нам напрямую в WhatsApp." data-err-en="Could not send. Please message us on WhatsApp." data-consent="Отметьте согласие на обработку данных." data-consent-en="Please confirm consent to data processing."></p>
     </form>
   </div>
@@ -230,7 +231,9 @@ function home(base) {
 
   const body = `
 <div class="loader" id="loader">
-  ${has('logo-vert.svg') ? '<img class="loader-logo loader-logo-v" src="/media/logo-vert.svg" alt="DEN CHAPULLETI — Новая роскошь: жить в экологичных и долговечных интерьерах">' : '<div class="loader-logo">DEN CHAPULLETI</div>'}
+  <img class="loader-mono" src="/media/monogram.svg" alt="">
+  <div class="loader-name">DEN CHAPULLETI</div>
+  <div class="loader-slogan"${en('New luxury is living in sustainable, lasting interiors')}>Новая роскошь — жить в экологичных и долговечных интерьерах</div>
   <div class="loader-bar"><i></i></div>
 </div>
 
@@ -301,7 +304,6 @@ ${vid ? `<video class="hero-video" id="heroVideo" autoplay muted loop playsinlin
     <div class="rings">
       <canvas id="rings" width="1200" height="1200"></canvas>
       <div class="rings-r">
-        <div class="eyebrow"${en('Signature · DEN CHAPULLETI')}>Авторский почерк · DEN CHAPULLETI</div>
         <div class="count" id="count">400 000</div>
         <div class="unit"${en('years ago')}>лет назад</div>
         <div class="epochs">
@@ -315,6 +317,7 @@ ${vid ? `<video class="hero-video" id="heroVideo" autoplay muted loop playsinlin
       </div>
     </div>
     <div class="manifest">
+      <div class="eyebrow"${en('Signature · DEN CHAPULLETI')}>Авторский почерк · DEN CHAPULLETI</div>
       <h2 class="h2 manifest-h"${enh('We do not assemble furniture.<br><em>We free the form from a single trunk</em>')}>Мы не собираем мебель.<br><em>Мы освобождаем форму из цельного ствола</em></h2>
       <p class="big" id="manifest"${enh('New luxury is living in eco-friendly, lasting interiors. Every work by Den Chapulleti rests on respect for the primal power of wood. We refuse glued timber, veneer and mass production: <em>sculptures are carved from a single log by hand</em>, monumental tables are made largely by hand with jewel-like finishing of edges, bases and surface.')}>Новая роскошь — жить в экологичных и долговечных интерьерах. В основе каждой работы Дена Чапуллети лежит уважение к первозданной мощи дерева. Мы принципиально отказываемся от клееного бруса, шпона и массового тиражирования. <em>Все скульптуры высекаются из цельного бревна вручную</em>, а монументальные столы создаются преимущественно вручную с ювелирной проработкой торцов, опор и поверхности.</p>
       <div class="marks marks-4">

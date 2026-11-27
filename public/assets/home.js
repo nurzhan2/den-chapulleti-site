@@ -572,7 +572,10 @@ gsap.to(mq, { xPercent: -50, duration: 34, ease: 'none', repeat: -1 });
 reveals();
 
 /* ================= старт ================= */
-gsap.to('.loader-logo', { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.6, ease: 'expo.out' });
+gsap.timeline()
+  .to('.loader-mono', { opacity: 1, clipPath: 'inset(0 0 0% 0)', duration: 1.4, ease: 'power3.inOut' })
+  .fromTo('.loader-name', { opacity: 0, letterSpacing: '.7em' }, { opacity: 1, letterSpacing: '.42em', duration: 1.3, ease: 'expo.out' }, '-=.3')
+  .fromTo('.loader .loader-slogan', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 1, ease: 'expo.out' }, '-=.7');
 
 await setModel('lava');
 frame();
