@@ -137,6 +137,8 @@ http.createServer(async (req, res) => {
   if (views.sections[p.slice(1)]) return send(res, 200, views.section(p.slice(1), base));
   if (p === '/materials') return send(res, 200, views.materials(base));
   if (p === '/sculptor') return send(res, 200, views.sculptor(base));
+  if (p === '/architects') return send(res, 200, views.architects(base));
+  if (p === '/press') return send(res, 200, views.press(base));
   if (p === '/privacy') return send(res, 200, views.privacy(base));
   if (legacy.includes(p.replace(/\.html$/, '')) || legacy.includes(p)) return send(res, 301, '', 'text/plain', { Location: '/' });
 
@@ -152,7 +154,7 @@ http.createServer(async (req, res) => {
     return send(res, 200, `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${base}/sitemap.xml\n`, 'text/plain; charset=utf-8');
   }
   if (p === '/sitemap.xml') {
-    const urls = ['/', ...Object.keys(views.sections).map(k => `/${k}`), '/materials', '/sculptor', ...exhibits.map(e => `/exhibits/${e.slug}`), '/privacy'];
+    const urls = ['/', ...Object.keys(views.sections).map(k => `/${k}`), '/materials', '/sculptor', '/architects', '/press', ...exhibits.map(e => `/exhibits/${e.slug}`), '/privacy'];
     const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
       .map(u => `  <url><loc>${base}${u}</loc><changefreq>weekly</changefreq><priority>${u === '/' ? '1.0' : '0.8'}</priority></url>`)
       .join('\n')}\n</urlset>\n`;

@@ -123,7 +123,7 @@ const NAV = [
   ['/cabinets-seating', 'Шкафы и кресла', 'Cabinets & seating'],
   ['/materials', 'Породы', 'Woods'],
   ['/sculptor', 'Скульптор', 'Sculptor'],
-  ['/#architects', 'Архитекторам', 'Architects'],
+  ['/architects', 'Архитекторам', 'Architects'],
 ];
 
 function header(page) {
@@ -153,7 +153,7 @@ function footer() {
     <div class="ftr-cols">
       <div class="ftr-links">
         ${NAV.map(([u, ru, e]) => `<a href="${u}"${en(e)}>${ru}</a>`).join('')}
-        <a href="/sculptor#press"${en('For curators & press · Media Kit')}>Кураторам и прессе · Media Kit</a>
+        <a href="/press"${en('For curators & press · Media Kit')}>Кураторам и прессе · Media Kit</a>
       </div>
       <div class="ftr-soc">
         <a class="ftr-wa" href="${esc(wa())}" target="_blank" rel="noopener" data-goal="whatsapp_click">${esc(contacts.whatsappLabel)}</a>
@@ -211,6 +211,19 @@ function emptyCard(cat) {
 }
 
 // ---------------- главная ----------------
+const ARCH_LIST = `<ul class="arch-list">
+      <li><b${en('3D / BIM library')}>3D / BIM-библиотека</b><span${en('Accurate polygon models (.max, .fbx, .obj) for your renders and working drawings.')}>Передаём точные полигональные модели (.max, .fbx, .obj) для интеграции в ваши визуализации и рабочие чертежи.</span></li>
+      <li><b${en('Live samples at your studio')}>Живые образцы в бюро</b><span${en('Fragments of stabilised solid wood, burl, resin and stains for client approval.')}>Отправляем фрагменты стабилизированного массива, капа, полимера и выкрасов для согласования с заказчиком.</span></li>
+      <li><b${en('Strict NDA')}>Строгий NDA</b><span${en('Guaranteed non-disclosure of the property, its location and the owner’s identity.')}>Гарантия неразглашения информации об объекте, локации и личности владельца.</span></li>
+      <li><b${en('Factory-ready')}>Заводская готовность</b><span${en('Furniture, sculpture and 2 cm grey barn board ceiling/beam kits made in the workshop with specifications handed to the contractor (no on-site installation).')}>Изготавливаем мебель, скульптуру и комплекты потолков и балок из серой амбарной доски 2&nbsp;см в мастерской с передачей спецификаций подрядчику (без проведения монтажных работ на объекте).</span></li>
+    </ul>`;
+
+const TALKS = [
+  ['01', '«Память материи»: реликтовый скальный дуб возрастом около 400&nbsp;000 лет и цельный ствол в современной архитектуре', 'Memory of matter: relict bog oak around 400,000 years old and the single trunk in contemporary architecture'],
+  ['02', '«На грани скульптуры и функции»: коллекционные объекты тиражом 1/1 для частных резиденций', 'Between sculpture and function: collectible objects in an edition of 1/1 for private residences'],
+  ['03', '«Инженерия массива»: стабилизация, вакуумная сушка и поведение дерева в интерьере с тёплыми полами и панорамным остеклением', 'Engineering solid wood: stabilisation, vacuum drying and how wood behaves in interiors with underfloor heating and panoramic glazing'],
+];
+
 function home(base) {
   const vid = has('lava-hero.mp4');
   const poster = has('lava-hero.jpg') ? ' poster="/media/lava-hero.jpg"' : '';
@@ -349,20 +362,58 @@ ${vid ? `<video class="hero-video" id="heroVideo" autoplay muted loop playsinlin
     </div>
   </section>
 
+  <section class="lib" id="woods">
+    <div class="lib-head">
+      <div class="eyebrow"${en('Encyclopedia of materials')}>Энциклопедия сырья</div>
+      <h2 class="h2"${enh('Library<br><em>of rare woods</em>')}>Библиотека<br><em>редких пород</em></h2>
+      <p class="lead"${en('Relict bog oak up to 400,000 years old, burl elm and poplar, African mahogany, parota and suar. Every trunk goes through multi-stage stabilisation and vacuum drying.')}>Реликтовый скальный дуб возрастом до 400&nbsp;000 лет, каповый карагач и тополь, африканский махагон, парота и суар. Каждый ствол проходит многоступенчатую стабилизацию и вакуумную сушку.</p>
+      <a class="btn btn-ghost" href="/materials"><span${en('All species')}>Все породы</span></a>
+    </div>
+    <ul class="lib-list">
+      ${WOODS.slice(0, 4).concat(WOODS.slice(7, 9)).map(w => `<li><b${en(w[1])}>${w[0]}</b><span${en(w[3])}>${w[2]}</span></li>`).join('')}
+    </ul>
+  </section>
+
   <section class="architects" id="architects">
     <div>
       <div class="eyebrow">B2B-сервис для бюро · @denchapulleti.studio</div>
       <h2 class="h2"${enh('BIM modelling<br>and <em>integration into interiors</em>')}>BIM-моделирование<br>и <em>интеграция в интерьеры</em></h2>
       <p class="lead"${en('A premium B2B service for architects, decorators and project managers. We create key art dominants for private residences, grand halls and view penthouses strictly to your project’s dimensions.')}>Премиальный B2B-сервис для архитекторов, декораторов и руководителей проектов. Создаём ключевые арт-доминанты для частных резиденций, парадных холлов и видовых пентхаусов строго по размерам вашего проекта.</p>
       <div class="files"><span>.MAX</span><span>.FBX</span><span>.OBJ</span><span>BIM</span></div>
-      <a class="btn" href="#audit" data-topic="Запрос 3D-библиотеки и условий для бюро"><span class="dot"></span><span${en('Request the 3D library and studio terms')}>Запросить 3D-библиотеку и условия для бюро</span></a>
     </div>
-    <ul class="arch-list">
-      <li><b${en('3D / BIM library')}>3D / BIM-библиотека</b><span${en('Accurate polygon models (.max, .fbx, .obj) for your renders and working drawings.')}>Передаём точные полигональные модели (.max, .fbx, .obj) для интеграции в ваши визуализации и рабочие чертежи.</span></li>
-      <li><b${en('Live samples at your studio')}>Живые образцы в бюро</b><span${en('Fragments of stabilised solid wood, burl, resin and stains for client approval.')}>Отправляем фрагменты стабилизированного массива, капа, полимера и выкрасов для согласования с заказчиком.</span></li>
-      <li><b${en('Strict NDA')}>Строгий NDA</b><span${en('Guaranteed non-disclosure of the property, its location and the owner’s identity.')}>Гарантия неразглашения информации об объекте, локации и личности владельца.</span></li>
-      <li><b${en('Factory-ready')}>Заводская готовность</b><span${en('Furniture, sculpture and 2 cm grey barn board ceiling/beam kits made in the workshop with specifications handed to the contractor (no on-site installation).')}>Изготавливаем мебель, скульптуру и комплекты потолков и балок из серой амбарной доски 2&nbsp;см в мастерской с передачей спецификаций подрядчику (без проведения монтажных работ на объекте).</span></li>
-    </ul>
+    <div>
+      <h3 class="arch-h"${en('Benefits for partners')}>Преимущества для партнёров</h3>
+      ${ARCH_LIST}
+      <div class="arch-cta">
+        <a class="btn" href="#audit" data-topic="Запрос 3D-библиотеки и условий для бюро"><span class="dot"></span><span${en('Request the 3D library and studio terms')}>Запросить 3D-библиотеку и условия для бюро</span></a>
+        <a class="link-more" href="/architects"${en('More for architects →')}>Подробнее для архитекторов →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="projects" id="projects">
+    <div class="eyebrow"${en('Commissions')}>Проекты под заказ</div>
+    <h2 class="h2"${enh('Created for a specific<br><em>space and owner</em>')}>Создаём под конкретное<br><em>пространство и владельца</em></h2>
+    <div class="proj-grid">
+      <article class="proj">
+        <div class="proj-n">01</div>
+        <h3${en('Private residences')}>Частные резиденции</h3>
+        <p${en('Banquet tables up to 6 m, dining and coffee tables from a single slab, bar systems, cabinets and armchairs, ceilings and beams of grey barn board. Everything to the dimensions of your house.')}>Банкетные столы длиной до 6&nbsp;м, обеденные и журнальные столы из цельного спила, барные системы, шкафы и кресла, потолки и балки из серой амбарной доски. Всё под размеры вашего дома.</p>
+        <a class="link-more" href="#audit" data-topic="Проект для частной резиденции"${en('Discuss a residence →')}>Обсудить проект резиденции →</a>
+      </article>
+      <article class="proj">
+        <div class="proj-n">02</div>
+        <h3${en('Art and culture')}>Искусство и культура</h3>
+        <p${en('Gallery sculpture up to 270 cm, park monuments from 2 m, works for exhibitions and public spaces. We prepare the object, plinth and accompanying documents.')}>Галерейная скульптура высотой до 270&nbsp;см, парковые монументы от 2&nbsp;м, работы для выставок и общественных пространств. Готовим объект, постамент и сопроводительные материалы.</p>
+        <a class="link-more" href="#audit" data-topic="Проект для галереи / выставки"${en('Discuss an art project →')}>Обсудить арт-проект →</a>
+      </article>
+    </div>
+    <div class="proj-stats">
+      <div><b>6 м</b><span${en('banquet table length')}>длина банкетного стола</span></div>
+      <div><b>270 см</b><span${en('height of the “Drop” sculpture')}>высота скульптуры «Капля»</span></div>
+      <div><b>210 см</b><span${en('mahogany cut diameter')}>диаметр спила махагона</span></div>
+      <div><b>1/1</b><span${en('edition of most works')}>тираж большинства работ</span></div>
+    </div>
   </section>
 
   <section class="geo" id="geo">
@@ -372,6 +423,14 @@ ${vid ? `<video class="hero-video" id="heroVideo" autoplay muted loop playsinlin
     </div>
     <div class="marquee"><div class="mq" id="mq">${['Москва', 'Подмосковье', 'Санкт-Петербург', 'Валдай', 'Тверь', 'Алтай', 'Урал', 'Владивосток', 'Камчатка'].map(c => `<span>${c}</span>`).join('')}</div></div>
     <p class="lead geo-note"${en('Works by DEN CHAPULLETI are held in private residences, estates and view penthouses across Russia. Owners, locations and individual projects are fully confidential under strict NDA.')}>Работы DEN CHAPULLETI находятся в закрытых частных резиденциях, усадьбах и видовых пентхаусах по всей России. Полная конфиденциальность владельцев, локаций и индивидуальных проектов по строгому NDA.</p>
+  </section>
+  <section class="expert" id="expert">
+    <div class="eyebrow"${en('Expertise and talks')}>Экспертиза и лекции</div>
+    <h2 class="h2"${enh('Talks for curators,<br><em>architects and collectors</em>')}>Выступления для кураторов,<br><em>архитекторов и коллекционеров</em></h2>
+    <ul class="expert-list">
+      ${TALKS.map(t => `<li><span>${t[0]}</span><p${en(t[2])}>${t[1]}</p></li>`).join('')}
+    </ul>
+    <a class="link-more" href="/press"${en('Media Kit and contacts for organisers →')}>Media Kit и контакты для организаторов →</a>
   </section>
 </main>
 ${auditForm('')}`;
@@ -460,6 +519,7 @@ function exhibit(ex, base) {
       <div class="ctas">
         <a class="btn" href="${esc(wa(waText))}" target="_blank" rel="noopener" data-goal="whatsapp_click"><span class="dot"></span><span${en(ex.status === 'production' ? 'Reserve on WhatsApp' : 'Ask the author on WhatsApp')}>${ex.status === 'production' ? 'Забронировать в WhatsApp' : 'Спросить автора в WhatsApp'}</span></a>
         <button class="btn btn-ghost" data-ar data-goal="ar_launch" data-glb="${models()[ex.slug] || ''}"${en('Try in AR')}>Примерить (AR)</button>
+        <button class="btn btn-ghost" data-dialog="dl3d"${en('Download 3D for architects')}>Скачать 3D для архитекторов</button>
       </div>
       <a class="ex-req" href="#audit"${en('Request passport and private catalogue')}>Запросить паспорт и закрытый каталог →</a>
     </div>
@@ -480,7 +540,22 @@ function exhibit(ex, base) {
     <div class="grid grid-3">${related.map(e => card(e, exhibits.indexOf(e))).join('')}</div>
   </section>
 </main>
-${auditForm(ex.title)}`;
+${auditForm(ex.title)}
+<dialog class="dlg" id="dl3d">
+  <button class="dlg-x" type="button" aria-label="Закрыть">×</button>
+  <div class="eyebrow"${en('3D / BIM for architects')}>3D / BIM для архитекторов</div>
+  <h2 class="h2 dlg-h"${en('Get the 3D model')}>Получить 3D-модель</h2>
+  <p class="lead"${en('Leave your studio and contact. We will send the model (.max, .fbx, .obj) and dimensions within one business day.')}>Оставьте бюро и контакт. Пришлём модель (.max, .fbx, .obj) и размеры в течение рабочего дня.</p>
+  <form class="lead-form" data-exhibit="${esc(ex.title)}" novalidate>
+    <div class="field"><input name="name" id="d-name" placeholder=" " required autocomplete="organization"><label for="d-name"${en('Name / studio')}>Имя / бюро</label></div>
+    <div class="field"><input name="contact" id="d-contact" placeholder=" " required autocomplete="email"><label for="d-contact"${en('E-mail / Telegram / WhatsApp')}>E-mail / Telegram / WhatsApp</label></div>
+    <input type="hidden" name="topic" value="3D-модель для архитекторов">
+    <input class="hp" name="website" tabindex="-1" autocomplete="off">
+    <label class="consent"><input type="checkbox" name="consent" required><span${enh('I agree to the processing of personal data under the <a href="/privacy">privacy policy</a>')}>Согласен на обработку персональных данных в соответствии с <a href="/privacy">политикой конфиденциальности</a></span></label>
+    <button class="btn" type="submit"><span class="dot"></span><span${en('Get the model')}>Получить модель</span></button>
+    <p class="form-msg" data-ok="Запрос получен. Пришлём модель в течение рабочего дня." data-ok-en="Request received. We will send the model within one business day." data-err="Не удалось отправить. Напишите нам в WhatsApp." data-err-en="Could not send. Please message us on WhatsApp." data-consent="Отметьте согласие на обработку данных." data-consent-en="Please confirm consent to data processing."></p>
+  </form>
+</dialog>`;
 
   return layout({
     base,
@@ -496,6 +571,18 @@ ${auditForm(ex.title)}`;
 }
 
 // ---------------- разделы каталога ----------------
+const MONUMENTAL = ['moai-207', 'kaplya-270', 'konsol-polusfera'];
+
+function byScale(items) {
+  const big = items.filter(e => MONUMENTAL.includes(e.slug)), small = items.filter(e => !MONUMENTAL.includes(e.slug));
+  const grp = (list, ru, enT, leadRu, leadEn) => list.length ? `<div class="scale-g">
+    <div class="scale-head"><h2 class="h2"${enh(enT)}>${ru}</h2><p class="lead"${en(leadEn)}>${leadRu}</p></div>
+    <div class="grid grid-3">${list.map(e => card(e, exhibits.indexOf(e))).join('')}</div>
+  </div>` : '';
+  return grp(big, 'Парковые монументы <em>от 2&nbsp;м</em>', 'Park monuments <em>from 2 m</em>', 'Вертикальные стелы, идолы и консоли из цельного ствола для парков, холлов и открытых пространств.', 'Vertical stelae, idols and consoles from a single trunk for parks, halls and open spaces.')
+    + grp(small, 'Камерная <em>интерьерная пластика</em>', 'Chamber <em>interior sculpture</em>', 'Анималистика, спилы и скульптура для кабинета, гостиной и частной коллекции.', 'Animal sculpture, cross-cuts and works for the study, living room and private collection.');
+}
+
 function section(key, base) {
   const s = sections[key];
   const items = exhibits.filter(e => s.cats.includes(e.cat));
@@ -507,7 +594,7 @@ function section(key, base) {
     <h1 class="h1-ex"${en(s.h1En)}>${s.h1Ru}</h1>
     <p class="lead"${en(s.leadEn)}>${s.leadRu}</p>
   </header>
-  ${items.length
+  ${key === 'sculpture' && items.length ? byScale(items) : items.length
     ? `<div class="grid grid-3">${items.map(e => card(e, exhibits.indexOf(e))).join('')}</div>`
     : `<div class="pg-empty"><p${en('Works in this section are presented in the private catalogue. Leave a request — we will send a presentation.')}>Работы этого раздела представлены в закрытом каталоге. Оставьте запрос — пришлём презентацию.</p><a class="btn" href="#audit"><span class="dot"></span><span${en('Request the private catalogue')}>Запросить закрытый каталог</span></a></div>`}
 </main>
@@ -572,7 +659,7 @@ function sculptor(base) {
       <div class="eyebrow"${en('For curators, galleries and press')}>Кураторам, галереям и прессе</div>
       <h2 class="h2"${enh('Media Kit<br><em>and talks</em>')}>Media Kit<br><em>и выступления</em></h2>
       <p class="lead"${en('Biography and method, key works in high resolution for publications and selection committees, talk topics and a direct contact for organisers.')}>Биография и творческий метод, ключевые работы в высоком разрешении для публикаций и отборочных комиссий, темы выступлений и прямой контакт для организаторов.</p>
-      <a class="btn" href="${esc(wa('Здравствуйте! Пишу как куратор / от редакции. Пришлите, пожалуйста, Media Kit DEN CHAPULLETI.'))}" target="_blank" rel="noopener" data-goal="whatsapp_click"><span class="dot"></span><span${en('Request the Media Kit (PDF)')}>Запросить Media Kit (PDF)</span></a>
+      <a class="btn" href="/press"><span class="dot"></span><span${en('Open the Media Kit')}>Открыть Media Kit</span></a>
     </div>
     <ul class="arch-list">
       <li><b${en('Talk')}>Выступление</b><span${en('“Memory of matter: working with 400,000-year-old relict wood and a single trunk in contemporary architecture.”')}>«Память материи: как работать с реликтовым массивом возрастом 400&nbsp;000 лет и цельным стволом в современной архитектуре».</span></li>
@@ -583,6 +670,68 @@ function sculptor(base) {
 </main>
 ${auditForm('', 'Кураторам и прессе')}`;
   return layout({ base, page: 'list', title: 'Скульптор Ден Чапуллети — Artist Statement — DEN CHAPULLETI', desc: 'Ден Чапуллети — скульптор и автор объектов коллекционного дизайна. Работа с реликтовым скальным дубом и цельным массивом, музейные объекты тиражом 1/1.', canonical: '/sculptor', og: '/assets/og.jpg', body });
+}
+
+function architects(base) {
+  const steps = [
+    ['Бриф и 3D', 'Brief and 3D', 'Получаем планы и задачу, передаём 3D/BIM-модель объекта (.max, .fbx, .obj) для вашей визуализации.', 'We take the plans and brief and hand over a 3D/BIM model (.max, .fbx, .obj) for your renders.'],
+    ['Образцы', 'Samples', 'Отправляем в бюро фрагменты массива, капа, полимера и выкрасов для согласования с заказчиком.', 'We send fragments of solid wood, burl, resin and stains to your studio for client approval.'],
+    ['Мануфактура', 'Manufacture', 'Изготавливаем объект в мастерской: отбор ствола, сушка, ручная резьба, отделка, шильд DC с QR-кодом.', 'The piece is made in the workshop: trunk selection, drying, hand carving, finishing, DC nameplate with QR code.'],
+    ['Передача', 'Handover', 'Упаковываем, доставляем на объект и передаём спецификации подрядчику. Монтажные работы не ведём.', 'We pack, deliver to site and hand specifications to the contractor. No on-site installation.'],
+  ];
+  const body = `
+<main class="pg">
+  <nav class="crumbs"><a href="/">DEN CHAPULLETI</a><span>/</span><span${en('Architects')}>Архитекторам</span></nav>
+  <header class="pg-head">
+    <div class="eyebrow">B2B · @denchapulleti.studio</div>
+    <h1 class="h1-ex"${en('For architects, decorators and project managers')}>Архитекторам, декораторам и руководителям проектов</h1>
+    <p class="lead"${en('We create art dominants for private residences, grand halls and view penthouses strictly to your project’s dimensions: banquet tables up to 6 m, sculpture up to 270 cm, ceilings and beams of grey barn board.')}>Создаём арт-доминанты для частных резиденций, парадных холлов и видовых пентхаусов строго по размерам вашего проекта: банкетные столы до 6&nbsp;м, скульптура до 270&nbsp;см, потолки и балки из серой амбарной доски.</p>
+    <div class="files"><span>.MAX</span><span>.FBX</span><span>.OBJ</span><span>BIM</span></div>
+  </header>
+  <section class="architects arch-page">
+    <div>
+      <div class="eyebrow"${en('Manufacture for studios')}>Мануфактура для бюро</div>
+      <h2 class="h2"${enh('Benefits<br><em>for partners</em>')}>Преимущества<br><em>для партнёров</em></h2>
+    </div>
+    <div>${ARCH_LIST}</div>
+  </section>
+  <section class="steps">
+    <div class="eyebrow"${en('How we work')}>Как мы работаем</div>
+    <ol class="steps-list">${steps.map((x, i) => `<li><span>0${i + 1}</span><b${en(x[1])}>${x[0]}</b><p${en(x[3])}>${x[2]}</p></li>`).join('')}</ol>
+  </section>
+</main>
+${auditForm('', 'Запрос 3D-библиотеки и условий для бюро')}`;
+  return layout({ base, page: 'list', title: 'Архитекторам и дизайнерам — 3D/BIM-библиотека — DEN CHAPULLETI', desc: 'B2B-сервис для архитекторов и декораторов: 3D/BIM-модели, живые образцы, NDA, изготовление скульптуры и мебели из массива под размеры проекта.', canonical: '/architects', og: '/assets/og.jpg', body });
+}
+
+function press(base) {
+  const works = [
+    ['Стол «Лава»', 'реликтовый скальный дуб (~400&nbsp;000 лет) со светящимся оптическим полимером и ручной резьбой'],
+    ['Спил африканского махагона', 'багряно-терракотовый срез ø&nbsp;210&nbsp;см с зеркальной полимерной стабилизацией'],
+    ['Скульптура «Капля»', 'галерейная стела 270&nbsp;см из капового тополя со сквозным окулусом'],
+    ['Идол Моаи и «Аммонит»', 'тотемная пластика из тополя с патинированием под вулканический камень и мансуровским гранитом'],
+    ['Анималистика', 'банкетка «Французский бульдог» из цельного ореха и фигура «Орангутан» из тополя на каменном постаменте'],
+    ['Архитектурные объекты', 'шестиметровые столы, кресла с угольным обжигом, барные системы и художественное маркетри'],
+  ];
+  const body = `
+<main class="pg">
+  <nav class="crumbs"><a href="/">DEN CHAPULLETI</a><span>/</span><span${en('Press · Media Kit')}>Кураторам и прессе</span></nav>
+  <header class="pg-head">
+    <div class="eyebrow">Portfolio &amp; Media Kit · 2026 · Moscow</div>
+    <h1 class="h1-ex">DEN CHAPULLETI</h1>
+    <p class="lead">Sculptor &amp; Collectible Design</p>
+  </header>
+  <section class="mk">
+    <div class="mk-row"><div class="eyebrow">Artist Statement</div><p>Ден Чапуллети создаёт скульптуры и объекты коллекционного дизайна из цельного массива: скальный дуб возрастом около 400&nbsp;000 лет, карагач, тополь, махагон. Работы выполняются вручную без клееного бруса и шпона и маркируются стальным шильдом DC с монограммой и QR-кодом (тираж 1/1).</p></div>
+    <div class="mk-row"><div class="eyebrow">Материалы и инженерия</div><p>Вакуумная сушка, монолитные слэбы диаметром до 2,1&nbsp;м и толщиной 10–11&nbsp;см, ручная высечка, обжиг якисуги и патинирование. В палитре реликтовый скальный дуб, вековой дуб, каповый тополь и карагач, грецкий и американский орех, парота, суар и африканский махагон. <a href="/materials">Библиотека пород →</a></p></div>
+    <div class="mk-row"><div class="eyebrow">Избранные работы</div><ul class="mk-list">${works.map(w => `<li><b>${w[0]}</b> — ${w[1]}</li>`).join('')}</ul></div>
+    <div class="mk-row"><div class="eyebrow">Экспертиза и лекции</div><ul class="mk-list">${TALKS.map(t => `<li>${t[1]}</li>`).join('')}</ul><p>Формат работы с архитекторами: 3D/BIM-модели (.max, .fbx, .obj), соблюдение NDA, частные собрания от Москвы и Валдая до Алтая и Камчатки.</p></div>
+    <div class="mk-row"><div class="eyebrow">Контакты</div><p>Автор: Ден Чапуллети (DEN CHAPULLETI)<br>WhatsApp / Telegram: ${esc(contacts.whatsappLabel)}<br>Instagram*: ${contacts.instagram.map(i => '@' + esc(i)).join(', ')}</p><p class="mk-note">* деятельность Meta запрещена в РФ</p>
+      <a class="btn" href="${esc(wa('Здравствуйте! Пишу как куратор / от редакции. Пришлите, пожалуйста, Media Kit DEN CHAPULLETI в PDF.'))}" target="_blank" rel="noopener" data-goal="whatsapp_click"><span class="dot"></span><span>Запросить Media Kit (PDF) и пресс-фото</span></a></div>
+  </section>
+</main>
+${auditForm('', 'Кураторам и прессе')}`;
+  return layout({ base, page: 'list', title: 'Кураторам и прессе — Media Kit — DEN CHAPULLETI', desc: 'Media Kit DEN CHAPULLETI для кураторов, галерей и прессы: метод автора, материалы, избранные работы, темы выступлений и контакты.', canonical: '/press', og: '/assets/og.jpg', body });
 }
 
 function privacy(base) {
@@ -645,4 +794,4 @@ function notFound(base) {
   });
 }
 
-module.exports = { home, exhibit, section, materials, sculptor, privacy, notFound, sections };
+module.exports = { home, exhibit, section, materials, sculptor, architects, press, privacy, notFound, sections };

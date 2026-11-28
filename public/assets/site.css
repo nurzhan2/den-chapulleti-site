@@ -475,3 +475,88 @@ button { font: inherit; color: inherit; }
 .audit-wa { margin-top: 18px; }
 .mnav-lang { font-size: 13px; }
 .manifest > .eyebrow { justify-content: center; }
+
+/* библиотека пород на главной */
+.lib { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(30px, 6vw, 100px); padding: 16vh var(--pad); border-top: 1px solid var(--border-subtle); align-items: start; }
+.lib-head .btn { margin-top: 30px; }
+.lib-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; }
+.lib-list li { padding: 20px 0; border-bottom: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 6px; }
+.lib-list b { font-family: var(--serif); font-weight: 400; font-size: 23px; }
+.lib-list span { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* архитекторы: заголовок над списком, кнопка после */
+.arch-h { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 2.4vw, 34px); padding-bottom: 8px; border-bottom: 1px solid var(--border-gold); }
+.arch-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 30px; }
+.link-more { font-family: var(--display); font-weight: 500; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--text-accent); border-bottom: 1px solid var(--border-gold); padding-bottom: 4px; }
+.architects .arch-cta .btn { margin-top: 30px; }
+.architects .arch-cta .link-more { margin-top: 30px; }
+
+/* проекты под заказ */
+.projects { padding: 16vh var(--pad); border-top: 1px solid var(--border-subtle); }
+.projects > .h2 { margin: 18px 0 7vh; }
+.proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.proj { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: clamp(28px, 4vw, 56px); display: flex; flex-direction: column; gap: 18px; transition: border-color .5s; }
+.proj:hover { border-color: var(--border-gold); }
+.proj-n { font-family: var(--display); color: var(--text-accent); letter-spacing: .3em; font-size: 12px; }
+.proj h3 { font-size: clamp(30px, 3vw, 44px); }
+.proj p { color: var(--text-secondary); line-height: 1.8; font-size: 15px; flex: 1; }
+.proj-stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 7vh; border-top: 1px solid var(--border-subtle); }
+.proj-stats div { padding: 28px 18px 0 0; display: flex; flex-direction: column; gap: 8px; }
+.proj-stats b { font-family: var(--serif); font-weight: 300; font-size: clamp(38px, 4.4vw, 64px); color: var(--text-primary); line-height: 1; }
+.proj-stats span { font-size: 12px; letter-spacing: .08em; color: var(--text-secondary); }
+
+/* экспертиза и лекции */
+.expert { padding: 16vh var(--pad); border-top: 1px solid var(--border-subtle); }
+.expert > .h2 { margin: 18px 0 6vh; }
+.expert-list { list-style: none; margin-bottom: 40px; }
+.expert-list li { display: grid; grid-template-columns: 80px 1fr; gap: 20px; padding: 26px 0; border-bottom: 1px solid var(--border-subtle); }
+.expert-list span { font-family: var(--display); color: var(--text-accent); letter-spacing: .3em; font-size: 12px; padding-top: 8px; }
+.expert-list p { font-family: var(--serif); font-size: clamp(21px, 2vw, 28px); line-height: 1.35; }
+
+/* подпись к географии */
+.geo-note { margin: 0 auto; padding: 7vh var(--pad) 0; max-width: 820px; text-align: center; font-family: var(--serif); font-style: italic; font-size: clamp(19px, 1.7vw, 24px); line-height: 1.55; color: var(--text-secondary); position: relative; }
+.geo-note::before { content: ''; display: block; width: 48px; height: 1px; background: var(--text-accent); margin: 0 auto 28px; }
+
+/* скульптура по масштабу */
+.scale-g { margin-top: 8vh; }
+.scale-head { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 6vw; align-items: end; padding-bottom: 4vh; margin-bottom: 4vh; border-bottom: 1px solid var(--border-subtle); }
+
+/* страница архитекторов */
+.pg-head .files { margin-top: 28px; }
+.arch-page { padding-left: 0 !important; padding-right: 0 !important; }
+.steps { padding: 10vh 0 6vh; border-top: 1px solid var(--border-subtle); }
+.steps-list { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 30px; }
+.steps-list li { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 30px 26px; display: flex; flex-direction: column; gap: 12px; }
+.steps-list span { font-family: var(--display); color: var(--text-accent); letter-spacing: .3em; font-size: 12px; }
+.steps-list b { font-family: var(--serif); font-weight: 400; font-size: 26px; }
+.steps-list p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+/* media kit */
+.mk { margin-top: 4vh; }
+.mk-row { display: grid; grid-template-columns: 240px 1fr; gap: 20px 5vw; padding: 5vh 0; border-top: 1px solid var(--border-subtle); }
+.mk-row > p, .mk-row > ul, .mk-row > .btn, .mk-row > .mk-note { grid-column: 2; }
+.mk-row p { font-size: 16px; line-height: 1.85; color: var(--text-secondary); }
+.mk-row p a { color: var(--text-accent); }
+.mk-list { list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: 16px; line-height: 1.7; color: var(--text-secondary); }
+.mk-list b { color: var(--text-primary); font-weight: 400; }
+.mk-note { font-size: 12px !important; }
+.mk-row .btn { justify-self: start; margin-top: 10px; }
+
+/* окно 3D для архитекторов */
+.dlg { margin: auto; width: min(520px, 92vw); background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-gold); padding: clamp(28px, 5vw, 48px); }
+.dlg::backdrop { background: rgba(0, 0, 0, .78); backdrop-filter: blur(4px); }
+.dlg-x { position: absolute; top: 14px; right: 18px; background: none; border: 0; color: var(--text-secondary); font-size: 28px; cursor: pointer; }
+.dlg-h { font-size: clamp(30px, 4vw, 42px); margin: 14px 0 12px; }
+.dlg .lead { font-size: 14px; margin-bottom: 18px; }
+.dlg .lead-form { gap: 18px; }
+
+@media (max-width: 820px) {
+  .lib, .proj-grid, .scale-head { grid-template-columns: 1fr; }
+  .lib-list { grid-template-columns: 1fr; }
+  .proj-stats { grid-template-columns: 1fr 1fr; }
+  .proj-stats div { padding-bottom: 20px; }
+  .expert-list li { grid-template-columns: 1fr; gap: 6px; }
+  .steps-list { grid-template-columns: 1fr; }
+  .mk-row { grid-template-columns: 1fr; }
+  .mk-row > p, .mk-row > ul, .mk-row > .btn, .mk-row > .mk-note { grid-column: 1; }
+}

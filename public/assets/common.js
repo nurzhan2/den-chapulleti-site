@@ -173,6 +173,13 @@ document.querySelectorAll('.lead-form').forEach(f => {
   });
 });
 
+document.querySelectorAll('[data-dialog]').forEach(b => {
+  const d = document.getElementById(b.dataset.dialog);
+  b.addEventListener('click', () => d.showModal());
+  d.querySelector('.dlg-x').addEventListener('click', () => d.close());
+  d.addEventListener('click', e => { if (e.target === d) d.close(); });
+});
+
 /* ---------- общие появления ---------- */
 export function reveals() {
   document.querySelectorAll('.split').forEach(el => {

@@ -332,6 +332,7 @@ addEventListener('pointermove', e => {
   userRot += vel;
 });
 addEventListener('pointerup', () => { drag = false; canvas.classList.remove('dragging'); });
+addEventListener('pointercancel', () => { drag = false; canvas.classList.remove('dragging'); });
 
 const lightOff = { x: 0, y: 0 };
 addEventListener('mousemove', e => { lightOff.x = (e.clientX / innerWidth - 0.5) * 2; lightOff.y = (e.clientY / innerHeight - 0.5) * 2; });
@@ -378,6 +379,8 @@ const clock = new THREE.Clock();
 const look = new THREE.Vector3(0, 0.6, 0), want = new THREE.Vector3(), wantLook = new THREE.Vector3();
 const tmp = new THREE.Vector3(), center = new THREE.Vector3();
 const video = document.getElementById('heroVideo');
+// iOS в режиме энергосбережения не запускает видео сам — стартуем по первому касанию
+if (video) addEventListener('touchstart', () => video.paused && fade.video > 0.01 && video.play().catch(() => {}), { once: true, passive: true });
 let autoRot = 0, sx = 0, sy = 0;
 
 function frame() {
@@ -564,6 +567,7 @@ addEventListener('pointerup', () => {
   if (pull.moved) track.addEventListener('click', e => e.preventDefault(), { capture: true, once: true });
   pull = null;
 });
+addEventListener('pointercancel', () => { if (pull) { track.classList.remove('drag'); pull = null; } });
 
 const mq = document.getElementById('mq');
 mq.innerHTML += mq.innerHTML;
