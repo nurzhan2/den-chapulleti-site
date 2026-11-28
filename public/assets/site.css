@@ -80,6 +80,7 @@ button { font: inherit; color: inherit; }
 
 /* фон: видео + 3D */
 .hero-video { position: fixed; inset: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 0; }
+.gl[hidden] { display: none; }
 .gl { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; touch-action: pan-y; cursor: grab; }
 .gl.dragging { cursor: grabbing; }
 .has-video .gl { opacity: 0; }
@@ -452,7 +453,7 @@ button { font: inherit; color: inherit; }
 .loader { text-align: center; gap: 22px; }
 .loader-mono { width: clamp(84px, 9vw, 120px); height: auto; opacity: 0; clip-path: inset(0 0 100% 0); }
 .loader-name { font-family: var(--display); font-size: clamp(20px, 3.4vw, 38px); letter-spacing: .42em; margin-right: -.42em; color: var(--text-primary); opacity: 0; }
-.loader .loader-slogan { font-family: var(--sans); font-style: normal; font-size: clamp(11px, 1vw, 13px); letter-spacing: .2em; color: var(--text-secondary); max-width: min(560px, 86vw); margin: 0; opacity: 0; }
+.loader .loader-slogan { font-family: var(--serif); font-style: italic; font-size: clamp(17px, 1.6vw, 21px); letter-spacing: .02em; line-height: 1.45; color: var(--text-secondary); max-width: min(560px, 86vw); margin: 0; opacity: 0; }
 
 /* шапка: подпись бренда всегда, на узких экранах под логотипом */
 @media (max-width: 1600px) {

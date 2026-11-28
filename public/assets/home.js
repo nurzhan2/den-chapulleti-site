@@ -386,6 +386,9 @@ let autoRot = 0, sx = 0, sy = 0;
 function frame() {
   requestAnimationFrame(frame);
   canvas.style.opacity = fade.gl;
+  // скрытый канвас не должен держать touch-action: Safari иначе гасит горизонтальные свайпы по всей странице
+  const hide = fade.gl < 0.01;
+  if (hide !== canvas.hidden) canvas.hidden = hide;
   if (video) {
     video.style.opacity = fade.video;
     if (fade.video < 0.01 && !video.paused) video.pause();
