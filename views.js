@@ -149,7 +149,7 @@ function footer() {
   const req = [l.name, l.inn && `ИНН ${l.inn}`, l.ogrn && `ОГРНИП ${l.ogrn}`].filter(Boolean).join(' • ');
   return `<footer class="ftr">
   <div class="ftr-top">
-    <div class="ftr-brand"><a class="brand" href="/"><img class="ftr-mono" src="/media/monogram.svg" alt=""><span class="ftr-name">DEN CHAPULLETI</span></a><p class="ftr-slogan"${en('New luxury is living in sustainable, lasting interiors')}>Новая роскошь — жить в экологичных и долговечных интерьерах</p></div>
+    <div class="ftr-brand"><a class="brand" href="/"><img class="ftr-mono" src="/media/monogram.svg" alt=""><img class="ftr-name" src="/media/name.svg" alt="DEN CHAPULLETI"></a><p class="ftr-slogan"${en('New luxury is living in sustainable, lasting interiors')}>Новая роскошь — жить в экологичных и долговечных интерьерах</p></div>
     <div class="ftr-cols">
       <div class="ftr-links">
         ${NAV.map(([u, ru, e]) => `<a href="${u}"${en(e)}>${ru}</a>`).join('')}
@@ -242,7 +242,7 @@ function home(base) {
   const body = `
 <div class="loader" id="loader">
   <img class="loader-mono" src="/media/monogram.svg" alt="">
-  <div class="loader-name">DEN CHAPULLETI</div>
+  <img class="loader-name" src="/media/name.svg" alt="DEN CHAPULLETI">
   <div class="loader-slogan"${en('New luxury is living in sustainable, lasting interiors')}>Новая роскошь — жить в экологичных и долговечных интерьерах</div>
   <div class="loader-bar"><i></i></div>
 </div>
@@ -367,10 +367,10 @@ ${vid ? `<video class="hero-video" id="heroVideo" autoplay muted loop playsinlin
       <div class="eyebrow"${en('Encyclopedia of materials')}>Энциклопедия сырья</div>
       <h2 class="h2"${enh('Library<br><em>of rare woods</em>')}>Библиотека<br><em>редких пород</em></h2>
       <p class="lead"${en('Relict bog oak up to 400,000 years old, burl elm and poplar, African mahogany, parota and suar. Every trunk goes through multi-stage stabilisation and vacuum drying.')}>Реликтовый скальный дуб возрастом до 400&nbsp;000 лет, каповый карагач и тополь, африканский махагон, парота и суар. Каждый ствол проходит многоступенчатую стабилизацию и вакуумную сушку.</p>
-      <a class="btn btn-ghost" href="/materials"><span${en('All species')}>Все породы</span></a>
+      <a class="btn btn-ghost" href="/materials"><span${en('Details for each species')}>Подробнее о каждой породе</span></a>
     </div>
     <ul class="lib-list">
-      ${WOODS.slice(0, 4).concat(WOODS.slice(7, 9)).map(w => `<li><b${en(w[1])}>${w[0]}</b><span${en(w[3])}>${w[2]}</span></li>`).join('')}
+      ${WOODS.map(w => `<li><b${en(w[1])}>${w[0]}</b><span${en(w[3])}>${w[2]}</span></li>`).join('')}
     </ul>
   </section>
 
